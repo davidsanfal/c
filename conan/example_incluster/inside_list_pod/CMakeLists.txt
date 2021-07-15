@@ -4,5 +4,5 @@ project(kubernetes_inside_cluster)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-add_executable(main main.cpp)
+add_executable(main main.c)
 target_link_libraries(main ${CONAN_LIBS})

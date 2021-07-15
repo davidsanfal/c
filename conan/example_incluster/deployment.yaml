@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: konan8s-deployment
+  labels:
+    app: konan8s
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: konan8s
+  template:
+    metadata:
+      labels:
+        app: konan8s
+    spec:
+      containers:
+      - name: konan8s
+        image: konan8s:latest
+        imagePullPolicy: Never
+        command: ['sh', '-c', '/home/conan/inside_list_pod/build/bin/main && sleep 300']
+      serviceAccountName: konan8s-serviceaccount
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: konan8s-serviceaccount
+  labels:
+    app: konan8s
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: konan8s-rolebinding
+subjects:
+- kind: ServiceAccount
+  name: konan8s-serviceaccount
+roleRef:
+  kind: Role
+  name: konan8s-role
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name:  konan8s-role
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list", "create", "update", "patch", "delete"]
